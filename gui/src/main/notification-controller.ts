@@ -9,6 +9,7 @@ import {
   ConnectingNotificationProvider,
   DisconnectedNotificationProvider,
   ErrorNotificationProvider,
+  NotificationAction,
   ReconnectingNotificationProvider,
   SystemNotification,
   SystemNotificationProvider,
@@ -109,24 +110,39 @@ export default class NotificationController {
   }
 
   private createNotification(systemNotification: SystemNotification) {
+    // Action buttons are only available on macOS.
+    const notificationAction =
+      process.platform === 'darwin' && systemNotification.action
+        ? [{ type: 'button' as 'button', text: systemNotification.action.text }]
+        : undefined;
+
     const notification = new Notification({
       title: this.notificationTitle,
       body: systemNotification.message,
       silent: true,
       icon: this.notificationIcon,
       timeoutType: systemNotification.critical ? 'never' : 'default',
+      actions: notificationAction,
     });
 
-    notification.on('click', () => {
-      if (systemNotification.action) {
-        const { withAuth, url } = systemNotification.action;
-        consumePromise(this.notificationControllerDelegate.openLink(url, withAuth));
-      } else {
-        this.notificationControllerDelegate.openApp();
-      }
-    });
+    notification.on('action', () => this.performAction(systemNotification.action!));
+    notification.on('click', () => this.performClickAction(systemNotification));
 
     return notification;
+  }
+
+  private performAction({ withAuth, url }: NotificationAction) {
+    consumePromise(this.notificationControllerDelegate.openLink(url, withAuth));
+  }
+
+  private performClickAction(systemNotification: SystemNotification) {
+    // Action buttons are only available on macOS and if a button is shown the onclick should open
+    // the app instead of performing the action.
+    if (process.platform !== 'darwin' && systemNotification.action) {
+      this.performAction(systemNotification.action);
+    } else {
+      this.notificationControllerDelegate.openApp();
+    }
   }
 
   private showTunnelStateNotification(systemNotification: SystemNotification) {
