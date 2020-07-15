@@ -32,6 +32,8 @@ Line wrap the file at 100 chars.                                              Th
 - Change version string parsing to never suggest the user to upgrade to an older version.
 - Make connectivity checker more resilient to suspension.
 - Make uninstaller on desktop platforms attempt to remove WireGuard keys from accounts.
+- Make important notification either not timeout or end up in the action/notification after being
+  displayed.
 
 #### Android
 - Show a system notification when the account time will soon run out.
