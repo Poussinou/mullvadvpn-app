@@ -22,15 +22,17 @@ open class TalpidVpnService : VpnService() {
         // DNS servers
         ArrayList(),
         // Routes
-        ArrayList(listOf(
-            InetNetwork(InetAddress.getByAddress(byteArrayOf(0, 0, 0, 0)), 0),
-            InetNetwork(
-                InetAddress.getByAddress(
-                    byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-                ),
-                0
+        ArrayList(
+            listOf(
+                InetNetwork(InetAddress.getByAddress(byteArrayOf(0, 0, 0, 0)), 0),
+                InetNetwork(
+                    InetAddress.getByAddress(
+                        byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                    ),
+                    0
+                )
             )
-        )),
+        ),
         // MTU
         1380
     )
